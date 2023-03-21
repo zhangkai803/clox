@@ -10,6 +10,11 @@
 // 指令对应的操作码
 typedef enum {
     OP_CONSTANT,  // 生成常数
+    OP_ADD,
+    OP_SUBTRACT,
+    OP_MULTIPLY,
+    OP_DIVIDE,
+    OP_NAGATE,  // 取负
     OP_RETURN,  // return 指令
 } OpCode;
 
