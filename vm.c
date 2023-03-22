@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "common.h"
 #include "vm.h"
+#include "compiler.h"
 #include "debug.h"
 
 // 声明全局的 VM 我们只需要一个虚拟机
@@ -93,8 +94,10 @@ static InterpretResult run () {
 #undef READ_BYTE
 }
 
-InterpretResult interpret(Chunk* chunk) {
-    vm.chunk = chunk;
-    vm.ip = vm.chunk->code;
-    return run();
+InterpretResult interpret(const char* source) {
+    compile(source);
+    return INTERPRET_OK;
+    // vm.chunk = chunk;
+    // vm.ip = vm.chunk->code;
+    // return run();
 }

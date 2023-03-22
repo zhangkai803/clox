@@ -1,8 +1,21 @@
 #include <stdio.h>
 #include "debug.h"
 
-static int constantInstruction(const char* name, Chunk* chunk, int offset);
-static int simpleInstruction(const char* name, int offset);
+// static int constantInstruction(const char* name, Chunk* chunk, int offset);
+// static int simpleInstruction(const char* name, int offset);
+
+static int constantInstruction(const char* name, Chunk* chunk, int offset) {
+    uint8_t constant = chunk->code[offset + 1];
+    printf("%-16s %4d '", name, constant);  // 左对齐留16个字符的位置打印操作码
+    printValue(chunk->constants.values[constant]);
+    printf("'\n");
+    return offset + 2;
+}
+
+static int simpleInstruction(const char* name, int offset) {
+    printf("%s\n", name);
+    return offset + 1;
+}
 
 void disassembleChunk(Chunk* chunk, const char* name) {
     printf("== %s ==\n", name);
@@ -45,17 +58,4 @@ int disassembleInstruction(Chunk* chunk, int offset) {
         printf("Unknow opcode %d\n", instruction);
         return offset + 1;
     }
-}
-
-static int constantInstruction(const char* name, Chunk* chunk, int offset) {
-    uint8_t constant = chunk->code[offset + 1];
-    printf("%-16s %4d '", name, constant);  // 左对齐留16个字符的位置打印操作码
-    printValue(chunk->constants.values[constant]);
-    printf("'\n");
-    return offset + 2;
-}
-
-static int simpleInstruction(const char* name, int offset) {
-    printf("%s\n", name);
-    return offset + 1;
 }
