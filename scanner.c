@@ -65,17 +65,31 @@ static char peekNext() {
 }
 
 static Token makeString() {
-    while (!isAtEnd() && peek() != '"') {
+    /**
+     * 这个方法的实现和书中不一样
+     * 按自己的思路改了一下 功能完全一样
+     * 核心是把 peek() != '"' 改成了 match('"')
+     * 因为 match 就是用作匹配的
+     * 不一样的地方就是 match 匹配成功时会自动往前走一步
+    */
+    while (!isAtEnd() && !match('"')) {
         if (peek() == '\n') {
             scanner.line++;
         }
-        advance();
+        advance();  // 这里一定要往前 因为 match 只有匹配成功时才往前
     }
 
     if (isAtEnd()) {
         return errorToken("Unterminated string.");
     }
-    advance();
+    /**
+     * 下面这行注释了
+     * 能走到这里 说明 isAtEnd == false，没有到文件最后
+     * 所以肯定是 match 成功匹配到双引号
+     * match 匹配成功时 会自动往前走一步
+     * 所以这里到 advance 要注释
+     */
+    // advance();
     return makeToken(TOKEN_STRING);
 }
 
@@ -107,7 +121,10 @@ static TokenType checkKeyword(int start, int length, const char* rest, TokenType
     return TOKEN_IDENTIFIER;
 }
 
-static TokenType makeKeyword() {
+static TokenType matchKeyword() {
+    /**
+     * 字典树 - -
+    */
     char c = scanner.start[0];
     switch (c)
     {
@@ -149,7 +166,7 @@ static Token makeIdentifier() {
     while (isAlpha(peek()) || isDigit(peek())) {
         advance();
     }
-    return makeToken(makeKeyword());
+    return makeToken(matchKeyword());
 }
 
 void skipWhiteSpace() {
@@ -175,13 +192,18 @@ void skipWhiteSpace() {
 }
 
 Token scanToken() {
+    /**
+     * 下面这两行的顺序不能变
+     * 在跳过空格时会调整 current 的值
+     * 一定要先完成跳过 再重置 start 才能正确指向下一个 token 的开头
+    */
     skipWhiteSpace();
     scanner.start = scanner.current;
-    // printf(">> %c \n", peek());
 
     if (isAtEnd()) {
         return makeToken(TOKEN_EOF);
     }
+
     char c = advance();
     switch (c)
     {
@@ -196,29 +218,33 @@ Token scanToken() {
     case '+': return makeToken(TOKEN_PLUS);
     case '-': return makeToken(TOKEN_MINUS);
     case '*': return makeToken(TOKEN_STAR);
-    // case '/': return makeToken(TOKEN_SLASH);
     // 双字符部分
     case '!':
+        // 遇到 ! 要看下是不是 !=
         if (match('=')) {
             return makeToken(TOKEN_BANG_EQUAL);
         }
         return makeToken(TOKEN_BANG);
     case '=':
+        // 遇到 = 要看下是不是 ==
         if (match('=')) {
             return makeToken(TOKEN_EQUAL_EQUAL);
         }
         return makeToken(TOKEN_EQUAL);
     case '<':
+        // 遇到 < 要看下是不是 <=
         if (match('=')) {
             return makeToken(TOKEN_LESS_EQUAL);
         }
         return makeToken(TOKEN_LESS);
     case '>':
+        // 遇到 > 要看下是不是 >=
         if (match('=')) {
             return makeToken(TOKEN_GREATER_EQUAL);
         }
         return makeToken(TOKEN_GREATER);
     case '/':
+        // 遇到 / 要看下是不是 //
         if (match('/')) {
             while (!isAtEnd() && !match('\n')) {
                 advance();
@@ -227,13 +253,17 @@ Token scanToken() {
             return makeToken(TOKEN_SLASH);
         }
     case '"':
+        // 遇到双引号 是字符串字面量
         return makeString();
     default:
         break;
     }
+    // 下面是一些批量的字符判断
+    // 匹配到 0-9 是数值字面量
     if (isDigit(c)) {
         return makeNumber();
     }
+    // 匹配到字母 有可能是关键字或者变量名
     if (isAlpha(c)) {
         return makeIdentifier();
     }

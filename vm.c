@@ -7,7 +7,7 @@
 // 声明全局的 VM 我们只需要一个虚拟机
 VM vm;
 
-static resetStack() {
+static void resetStack() {
     vm.stackTop = vm.stack;
 }
 
