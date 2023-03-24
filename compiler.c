@@ -8,6 +8,8 @@ void compile(const char* source) {
     initScanner(source);
 
     int line = -1;
+    printf("Line|TK|Value\n");
+    printf("----|--|-----\n");
     for (;;) {
         Token token = scanToken();
         if (token.line != line) {
