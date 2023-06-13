@@ -2,13 +2,13 @@
 #define clox_scanner_h
 
 typedef enum {
-    // 字符
+    // 单字符
     TOKEN_LEFT_PAREN, TOKEN_RIGHT_PAREN,  // ( )
     TOKEN_LEFT_BRACE, TOKEN_RIGHT_BRACE,  // { }
-    TOKEN_COMMA, TOKEN_DOT, TOKEN_SEMECOLON,  // , . ;
+    TOKEN_COMMA, TOKEN_DOT, TOKEN_SEMICOLON,  // , . ;
     TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH,  // + - * /
 
-    // 操作符
+    // 连字符
     TOKEN_BANG, TOKEN_BANG_EQUAL,  // ! !=
     TOKEN_EQUAL, TOKEN_EQUAL_EQUAL,  // = ==
     TOKEN_GREATER, TOKEN_GREATER_EQUAL,  // > >=
@@ -27,22 +27,22 @@ typedef enum {
 
     // 其他
     TOKEN_EOF,  // end of file 结束标记
-    TOKEN_ERRPR  // 错误标记
+    TOKEN_ERROR  // 错误标记
 } TokenType;
 
 typedef struct
 {
-    const char* start;
-    const char* current;
-    int line;
+    const char* current;  // 当前扫描到的位置
+    const char* start;  // 开始扫描的位置
+    int line;  // 当前扫描到的行号
 } Scanner;
 
 typedef struct
 {
-    TokenType type;
-    const char* start;
-    int length;
-    int line;
+    TokenType type;  // 符号类型
+    const char* start;  // 符号开始位置
+    int length;  // 符号长度
+    int line;  // 符号所在行
 } Token;
 
 

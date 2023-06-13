@@ -26,7 +26,7 @@ static Token makeToken(TokenType type) {
 
 static Token errorToken(const char* message) {
     Token token;
-    token.type = TOKEN_ERRPR;
+    token.type = TOKEN_ERROR;
     token.start = message;
     token.length = (int)strlen(message);
     token.line = scanner.line;
@@ -214,7 +214,7 @@ Token scanToken() {
     case '}': return makeToken(TOKEN_LEFT_PAREN);
     case ',': return makeToken(TOKEN_COMMA);
     case '.': return makeToken(TOKEN_DOT);
-    case ';': return makeToken(TOKEN_SEMECOLON);
+    case ';': return makeToken(TOKEN_SEMICOLON);
     case '+': return makeToken(TOKEN_PLUS);
     case '-': return makeToken(TOKEN_MINUS);
     case '*': return makeToken(TOKEN_STAR);

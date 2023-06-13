@@ -95,8 +95,32 @@ static InterpretResult run () {
 }
 
 InterpretResult interpret(const char* source) {
-    compile(source);
-    return INTERPRET_OK;
+    // 初始化一个空的字节码块
+    Chunk chunk;
+    initChunk(&chunk);
+
+    // 编译源代码 把字节码写入到块中
+    if (!compile(source, &chunk)) {
+        // 如果编译出错 返回错误 并释放字节码块的内存
+        freeChunk(&chunk);
+        return INTERPRET_COMPLE_ERROR;
+    }
+
+    // 编译完成后
+    // 把字节码块交给虚拟机
+    vm.chunk = &chunk;
+    vm.ip = vm.chunk->code;
+
+    // 解释执行
+    InterpretResult result = run();
+
+    // 执行结束释放字节码块的内存
+    freeChunk(&chunk);
+    return result;
+
+    // compile(source);
+    // return INTERPRET_OK;
+
     // vm.chunk = chunk;
     // vm.ip = vm.chunk->code;
     // return run();
