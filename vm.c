@@ -117,11 +117,4 @@ InterpretResult interpret(const char* source) {
     // 执行结束释放字节码块的内存
     freeChunk(&chunk);
     return result;
-
-    // compile(source);
-    // return INTERPRET_OK;
-
-    // vm.chunk = chunk;
-    // vm.ip = vm.chunk->code;
-    // return run();
 }

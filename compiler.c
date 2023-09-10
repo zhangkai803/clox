@@ -100,6 +100,15 @@ static void consume(TokenType type, const char* message) {
     errorAtCurrent(message);
 }
 
+static bool match(TokenType type) {
+    // 匹配一个 Token 类型 如果匹配成功 就会消费这个 Token
+    if (parser.current.type == type) {
+        advance();
+        return true;
+    }
+    return false;
+}
+
 static void emitByte(uint8_t byte) {
     writeChunk(currentChunk(), byte, parser.previous.line);
 }
@@ -172,7 +181,8 @@ static void grouping() {
 }
 
 static void number() {
-    double value = strtod(parser.previous.start, NULL);
+    Value value = strtod(parser.previous.start, NULL);
+    // printf("parse number: %f\n" % value);
     emitConstant(value);
 }
 
@@ -263,6 +273,61 @@ static void expression() {
     parsePrecedence(PREC_ASSIGNMENT);
 }
 
+static void parseVariableName(const char* errorMessage) {
+    consume(TOKEN_IDENTIFIER, errorMessage);
+}
+
+static void variableDeclaration() {
+    parseVariableName("Expect variable name.");  // 变量名
+
+    if (match(TOKEN_EQUAL)) {  // 如果有等号 计算等号后面的表达式
+        expression();
+    } else {
+        emitByte(OP_NIL);  // 如果没有等号 变量初始值为 nil
+    }
+
+    consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration.");  // 语句最后的分号
+    // defineVariable(global);  //
+}
+
+static void declaration() {
+    /*
+        第一部分 表达式
+        expression     → assignment ;
+        assignment     → ( call "." )? IDENTIFIER "=" assignment | logic_or ;
+        logic_or       → logic_and ("or" logic_and)* ;
+        logic_and      → equality ( "and " equality )* ;
+        equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+        comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+        term           → factor ( ( "-" | "+" ) factor )* ;
+        factor         → unary ( ( "/" | "*" ) unary )* ;
+        unary          → ( "!" | "-" ) unary | call ;
+        call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
+        arguments      → expression ( "," expression )* ;
+        primary        → "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")" | "super" "." IDENTIFIER ;
+
+        第二部分 语句
+        program        → declaration* EOF ;
+        declaration    → classDecl | funDecl | varDecl | statement ;
+        classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )? "{" function* "}" ;
+        funDecl        → "fun" function ;
+        function       → IDENTIFIER "(" parameters? ")" block ;
+        parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
+        varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+        statement      → exprStmt | forStmt | ifStmt | printStmt | returnStmt | whileStmt | block ;
+        exprStmt       → expression ";" ;
+        forStmt        → "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ")" statement ;
+        ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
+        printStmt      → "print" expression ";" ;
+        returnStmt     → "return" expression? ";" ;
+        whileStmt      → "while" "(" expression ")" statement ;
+        block          → "{" declaration* "}" ;
+     */
+    if (match(TOKEN_VAR)) {
+        variableDeclaration();
+    }
+}
+
 bool compile(const char* source, Chunk* chunk) {
     initScanner(source);
     compilingChunk = chunk;
@@ -270,21 +335,11 @@ bool compile(const char* source, Chunk* chunk) {
     parser.panicMode = false;
 
     advance();
-    expression();
+
+    while (!match(TOKEN_EOF)) {
+        declaration();
+    }
+
     consume(TOKEN_EOF, "Expect end of expression.");
-    //     Token token = scanToken();
-    //     if (token.line != line) {
-    //         printf("%4d ", token.line);
-    //         line = token.line;
-    //     } else {
-    //         printf("   | ");
-    //     }
-
-    //     printf("%2d '%.*s'\n", token.type, token.length, token.start);
-
-    //     if (token.type == TOKEN_EOF) {
-    //         break;
-    //     }
-    // }
     return true;
 }

@@ -30,15 +30,15 @@ typedef enum {
     TOKEN_ERROR  // 错误标记
 } TokenType;
 
-typedef struct
-{
+void printTokenType(TokenType type);
+
+typedef struct {
     const char* current;  // 当前扫描到的位置
     const char* start;  // 开始扫描的位置
     int line;  // 当前扫描到的行号
 } Scanner;
 
-typedef struct
-{
+typedef struct {
     TokenType type;  // 符号类型
     const char* start;  // 符号开始位置
     int length;  // 符号长度

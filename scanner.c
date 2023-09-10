@@ -5,6 +5,132 @@
 
 Scanner scanner;
 
+void printTokenType(TokenType type) {
+    switch (type) {
+        case TOKEN_LEFT_PAREN:
+            printf("(\n");
+            break;
+        case TOKEN_RIGHT_PAREN:
+            printf(")\n");
+            break;
+        case TOKEN_LEFT_BRACE:
+            printf("{\n");
+            break;
+        case TOKEN_RIGHT_BRACE:
+            printf("}\n");
+            break;
+        case TOKEN_COMMA:
+            printf(",\n");
+            break;
+        case TOKEN_DOT:
+            printf(".\n");
+            break;
+        case TOKEN_SEMICOLON:
+            printf(";\n");
+            break;
+        case TOKEN_PLUS:
+            printf("+\n");
+            break;
+        case TOKEN_MINUS:
+            printf("-\n");
+            break;
+        case TOKEN_STAR:
+            printf("*\n");
+            break;
+        case TOKEN_SLASH:
+            printf("/\n");
+            break;
+        case TOKEN_BANG:
+            printf("!\n");
+            break;
+        case TOKEN_BANG_EQUAL:
+            printf("!=\n");
+            break;
+        case TOKEN_EQUAL:
+            printf("=\n");
+            break;
+        case TOKEN_EQUAL_EQUAL:
+            printf("==\n");
+            break;
+        case TOKEN_GREATER:
+            printf(">\n");
+            break;
+        case TOKEN_GREATER_EQUAL:
+            printf(">=\n");
+            break;
+        case TOKEN_LESS:
+            printf("<\n");
+            break;
+        case TOKEN_LESS_EQUAL:
+            printf("<=\n");
+            break;
+        case TOKEN_IDENTIFIER:
+            printf("variable\n");
+            break;
+        case TOKEN_NUMBER:
+            printf("number\n");
+            break;
+        case TOKEN_AND:
+            printf("and\n");
+            break;
+        case TOKEN_OR:
+            printf("or\n");
+            break;
+        case TOKEN_IF:
+            printf("if\n");
+            break;
+        case TOKEN_ELSE:
+            printf("else\n");
+            break;
+        case TOKEN_FOR:
+            printf("for\n");
+            break;
+        case TOKEN_WHILE:
+            printf("while\n");
+            break;
+        case TOKEN_CLASS:
+            printf("class\n");
+            break;
+        case TOKEN_FUN:
+            printf("fun\n");
+            break;
+        case TOKEN_VAR:
+            printf("var\n");
+            break;
+        case TOKEN_TRUE:
+            printf("true\n");
+            break;
+        case TOKEN_FALSE:
+            printf("false\n");
+            break;
+        case TOKEN_NIL:
+            printf("nil\n");
+            break;
+        case TOKEN_PRINT:
+            printf("print\n");
+            break;
+        case TOKEN_RETURN:
+            printf("return\n");
+            break;
+        case TOKEN_SUPER:
+            printf("super\n");
+            break;
+        case TOKEN_THIS:
+            printf("this\n");
+            break;
+        case TOKEN_EOF:
+            printf("eof\n");
+            break;
+        case TOKEN_ERROR:
+            printf("error\n");
+            break;
+
+        default:
+            printf("UNKNOWN TOKEN\n");
+            break;
+    }
+}
+
 void initScanner(const char* source) {
     scanner.start = source;
     scanner.current = source;
@@ -21,6 +147,7 @@ static Token makeToken(TokenType type) {
     token.start = scanner.start;
     token.length = (int)(scanner.current - scanner.start);
     token.line = scanner.line;
+    printTokenType(type);
     return token;
 }
 

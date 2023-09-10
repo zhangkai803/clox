@@ -16,6 +16,7 @@ typedef enum {
     OP_DIVIDE,
     OP_NAGATE,  // 取负
     OP_RETURN,  // return 指令
+    OP_NIL,
 } OpCode;
 
 // 字节码序列 动态数组
